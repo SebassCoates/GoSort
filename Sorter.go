@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 )
 
 const (
@@ -24,24 +25,37 @@ var (
 )
 
 func main() {
-	var populating = make(chan int)
-	initialize(populating)
-	for range populating {
-		//Wait until arrays have populated to print
-	}
-	printArray(TINY, tinyArray)
+   	var args = os.Args[1:]
+   	var valid = checkErrors(args)
 
-	var sorting = make(chan int)
-	mergeSortAll(sorting)
-	for range sorting {
-		//Wait until arrays done sorting to print
-	}
-	printArray(TINY, tinyArray)
+   	if (valid) {
+		var populating = make(chan int)
+		initialize(populating)
+		for range populating {
+			//Wait until arrays have populated to print
+		}
 
-	var checkingSorted = make(chan int)
-	checkArraysSorted(checkingSorted)
-	for range checkingSorted {
-		//Wait until done checking arrays properly sorted
+		var sorting = make(chan int)
+		doSpecifiedSort(args[0], sorting)
+
+		for range sorting {
+			//Wait until arrays done sorting to print
+		}
+
+		var checkingSorted = make(chan int)
+		checkArraysSorted(checkingSorted)
+		for range checkingSorted {
+			//Wait until done checking arrays properly sorted
+		}
+	}
+}
+
+func doSpecifiedSort(parameter string, channel chan int) {
+	switch parameter {
+		case "insertion":
+			insertionSortAll(channel);
+		case "merge":
+			mergeSortAll(channel);
 	}
 }
 
@@ -116,6 +130,26 @@ func printArray(size int, array []int) {
 		fmt.Print(" ")
 	}
 	fmt.Printf("\n")
+}
+
+func checkErrors(args []string) (bool){
+	if len(args) != 1 {
+		displayUsage()
+		return false;
+	}
+	if args[0] == "insertion" {
+	} else if args[0] == "merge"{ 
+	} else {
+		displayUsage();
+		return false;
+	}
+
+	return true;
+}
+
+func displayUsage() {
+	fmt.Println("Usage: mode")
+	fmt.Println("Valid modes: 'insertion' 'merge' (more to be added)")
 }
 
 
