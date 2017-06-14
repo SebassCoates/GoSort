@@ -24,73 +24,48 @@ func insertionSort(size int, array []int, channel chan int) {
 }
 
 func mergeSort(size int, array []int, channel chan int) {
-	//var newArray = mergeRecurse(array)
-	array = mergeRecurse(array)
-	//copySlice(array, newArray)
+	mergeRecurse(array, 0, len(array))
 	channel <- size //Signal end of sort
 }
 
-func copySlice(target []int, source []int) {
-	for i:= 0; i < len(source); i++{
-		target[i] = source[i]
+func mergeRecurse(array []int, start, end int) {
+	if end-start < 2 {
+		//Do not modify array
+	} else {
+		var lStart, lEnd, rStart, rEnd = mergeSplit(start, end)
+		mergeRecurse(array, lStart, lEnd)
+		mergeRecurse(array, rStart, rEnd)
+		merge(array, lStart, lEnd, rStart, rEnd)
 	}
 }
 
-func mergeRecurse(array []int) ([]int) {
-	if (len(array) < 2){
-		return array;
-	}else{
-		var leftSub, rightSub = mergeSplit(array)
-		var sortedLeft = mergeRecurse(leftSub)
-		var sortedRight = mergeRecurse(rightSub)
-		return (merge(sortedLeft, sortedRight))
-	}
-	
+func mergeSplit(start, end int) (int, int, int, int) {
+	return start, (end + start) / 2, (end + start) / 2, end
 }
 
-func mergeSplit(toSplit []int) ([]int, []int) {	
-	var leftSize int = len(toSplit) / 2
-	var rightSize int = len(toSplit) - leftSize
-	//fmt.Printf("leftSize = %d, rightSize = %d, total = %d\n", leftSize, rightSize, len(toSplit))
-
-	var leftSub = make([]int, leftSize, leftSize)
-	var rightSub = make([]int, rightSize, rightSize)
-
-	for i:=0; i < leftSize; i++{
-		leftSub[i] = toSplit[i];
-	}
-	for i:=0; i < rightSize; i++{
-		rightSub[i] = toSplit[i + leftSize]
-	}
-
-	return leftSub, rightSub
-}
-
-func merge(leftSub []int, rightSub []int) ([]int) {
-	var newSize = len(leftSub) + len(rightSub)
-	var leftSize =len(leftSub)
-	var rightSize = len(rightSub)
-	var leftCounter = 0
-	var rightCounter = 0
-	var mergedList = make([]int, newSize, newSize)
+func merge(array []int, lStart, lEnd, rStart, rEnd int){
+	var lCounter = 0
+	var rCounter = 0
+	var leftSize = (lEnd - lStart)
+	var rightSize = (rEnd - rStart)
+	var newSize = leftSize + rightSize
 
 	for i:=0; i < newSize; i++{
-		if leftCounter == leftSize{
-			mergedList[i] = rightSub[rightCounter]
-			rightCounter++
-		} else if rightCounter == rightSize{
-			mergedList[i] = leftSub[leftCounter]
-			leftCounter++
+		if lCounter == leftSize{
+			array[lStart + i] = array[rCounter + rStart]
+			rCounter++
+		} else if rCounter == rightSize{
+			array[lStart + i] = array[lCounter + lStart]
+			lCounter++
 		} else{
-			if leftSub[leftCounter] < rightSub[rightCounter]{
-				mergedList[i] = leftSub[leftCounter]
-				leftCounter++;
+			if array[lCounter + lStart] < array[rCounter + rStart]{
+				array[lStart + i] = array[lCounter + lStart]
+				lCounter++;
 			} else{
-				mergedList[i] = rightSub[rightCounter]
-				rightCounter++;
+				array[lStart + i] = array[rCounter + rStart]
+				rCounter++;
 			}
 		}
 	}
-	
-	return mergedList
 }
+
