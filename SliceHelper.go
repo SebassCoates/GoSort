@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
+	"sort"
 )
 
 func populateArrayRand(size int, array []int, channel chan int) {
@@ -24,18 +25,15 @@ func populateArrayIncreasing(size int, array []int, channel chan int) {
 	channel <- size //Signal end of sort
 }
 
-func checkSorted(size int, array []int, channel chan int) {
+func checkSorted(size int, toCheck, initial []int, channel chan int) {
 	var sorted = true
 
+	//Sort original contents using known functional algorithm to compare
+	sort.Ints(initial);
+
 	for i := 0; i < size; i++ {
-		for j := i + 1; j < size; j++ {
-			if array[i] > array[j] {
-				sorted = false
-				break
-			}
-		}
-		if !sorted {
-			break
+		if toCheck[i] != initial[i]{
+			sorted = false;
 		}
 	}
 
