@@ -24,17 +24,37 @@ func insertionSort(size int, array []int, channel chan int) {
 }
 
 func mergeSort(size int, array []int, channel chan int) {
-	mergeRecurse(array, 0, len(array))
+	var preMergeChannel = make(chan int)
+	mergeRecurse(array, 0, len(array), preMergeChannel)
+	for range preMergeChannel{
+		//Wait for sort to finish
+	}
 	channel <- size //Signal end of sort
 }
 
-func mergeRecurse(array []int, start, end int) {
+func mergeRecurse(array []int, start, end int, mergeChannel chan int) {
+	if (len(array) == 10) {
+		printArray(len(array), array)
+	}
+	defer close(mergeChannel)
+
 	if end-start < 2 {
-		//Do not modify array
+		//Do nothing
 	} else {
 		var lStart, lEnd, rStart, rEnd = mergeSplit(start, end)
-		mergeRecurse(array, lStart, lEnd)
-		mergeRecurse(array, rStart, rEnd)
+
+		var newMergeChannel = make(chan int)
+		go mergeRecurse(array, lStart, lEnd, newMergeChannel)
+		for range newMergeChannel{
+			//wait for first call to finish
+		}
+
+		var otherNewChannel = make(chan int)
+		go mergeRecurse(array, rStart, rEnd, otherNewChannel)
+		for range otherNewChannel{
+			//wait for second call to finish
+		}
+		
 		merge(array, lStart, lEnd, rStart, rEnd)
 	}
 }
