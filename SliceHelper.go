@@ -21,6 +21,7 @@ func printArray(size int, array []int) {
 	fmt.Printf("\n")
 }
 
+//Populate array with random numbers from [0, size - 1]
 func populateArrayRand(size int, array []int, channel chan int) {
 	var generator = rand.New(rand.NewSource(time.Now().UnixNano()))
 
@@ -31,6 +32,7 @@ func populateArrayRand(size int, array []int, channel chan int) {
 	channel <- size //Signal end of sort
 }
 
+//Populate array with increasing numbers from [0, size - 1]
 func populateArrayIncreasing(size int, array []int, channel chan int) {
 	for i := 0; i < size; i++ {
 		array[i] = i
@@ -39,6 +41,7 @@ func populateArrayIncreasing(size int, array []int, channel chan int) {
 	channel <- size //Signal end of sort
 }
 
+//Populate array with decreasing numbers from [size - 1, 0]
 func populateArrayDecreasing(size int, array []int, channel chan int) {
 	for i := 0; i < size; i++ {
 		array[i] = size - i -1;
@@ -47,7 +50,7 @@ func populateArrayDecreasing(size int, array []int, channel chan int) {
 	channel <- size //Signal end of sort
 }
 
-
+//Deep copy array
 func copyArray(size int, source, target []int, channel chan int) {
 
 	for i:=0; i<size; i++ {
@@ -57,6 +60,7 @@ func copyArray(size int, source, target []int, channel chan int) {
 	channel <-size;
 }
 
+//Check array was sorted properly
 func checkSorted(size int, toCheck, initial []int, channel chan int) {
 	var sorted = true
 
