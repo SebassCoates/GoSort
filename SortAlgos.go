@@ -44,14 +44,14 @@ func mergeRecurse(array []int, start, end int, mergeChannel chan int) {
 		var lStart, lEnd, rStart, rEnd = mergeSplit(start, end)
 
 		//Sort left half
-		var newMergeChannel = make(chan int)
-		go mergeRecurse(array, lStart, lEnd, newMergeChannel)
-		for range newMergeChannel{} //wait for left half sorted
+		var leftMergeChannel = make(chan int)
+		go mergeRecurse(array, lStart, lEnd, leftMergeChannel)
+		for range leftMergeChannel{} //wait for left half sorted
 
 		//Sort right half
-		var otherNewChannel = make(chan int)
-		go mergeRecurse(array, rStart, rEnd, otherNewChannel)
-		for range otherNewChannel{} //wait for right half sorted
+		var rightMergeChannel = make(chan int)
+		go mergeRecurse(array, rStart, rEnd, rightMergeChannel)
+		for range rightMergeChannel{} //wait for right half sorted
 		
 		//Merge left and right half
 		merge(array, lStart, lEnd, rStart, rEnd)
