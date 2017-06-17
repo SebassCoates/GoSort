@@ -64,9 +64,6 @@ func mergeSplit(start, end int) (int, int, int, int) {
 }
 
 //Merge sorted subarrays into one sorted array
-//Merging occurs in place - adds complexity to normal algorithm
-//THIS IS NOT WORKING
-//TODO - MAKE THIS NOT BAD
 func merge(array []int, lStart, lEnd, rStart, rEnd int){
 	var lCounter = 0
 	var rCounter = 0
@@ -78,8 +75,6 @@ func merge(array []int, lStart, lEnd, rStart, rEnd int){
 	var newArray = make([]int, newSize, newSize) 
 
 	//Merge process - combine subarrays in place
-	//Precondition: left and right sections are sorted 
-	//This is broken
 	for i:=0; i < newSize; i++{
 		if lCounter == leftSize{
 			newArray[i] = array[rCounter + rStart]
@@ -98,9 +93,10 @@ func merge(array []int, lStart, lEnd, rStart, rEnd int){
 		}
 	}
 
-	//For debugging purposes
-	if (len(array) == 10){
-		printArray(len(newArray), newArray)
+	//Copy over array with sorted values 
+	//Can this be avoided with a better algorithm above?
+	for i:=0; i < newSize; i++ {
+		array[i+lStart] = newArray[i];
 	}
 }
 
